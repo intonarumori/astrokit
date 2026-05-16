@@ -1,6 +1,4 @@
 import 'package:astrokit/astrokit.dart';
-import 'package:astrokit/components/appbar/astro_appbar.dart';
-import 'package:astrokit/components/split_navigation/split_navigation_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
