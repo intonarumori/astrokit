@@ -1,4 +1,6 @@
 import 'package:astrokit/astrokit.dart';
+import 'package:astrokit/components/menu/grid_menu.dart';
+import 'package:astrokit/components/popup/popup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +41,21 @@ class ContentPage extends StatelessWidget {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  child: Column(children: [Text(title, style: Theme.of(context).textTheme.headlineMedium)]),
+                  child: Column(
+                    children: [
+                      Text(title, style: Theme.of(context).textTheme.headlineMedium),
+                      DropdownPopup(
+                        preferredAlignment: Alignment.bottomCenter,
+                        contentBuilder: (context) => GridMenu(
+                          columns: 4,
+                          itemsBuilder: (context) => [
+                            for (var i = 1; i <= 16; i++) GridMenuItem(title: 'Item $i', icon: Icon(CupertinoIcons.star), onTap: () {}),
+                          ],
+                        ),
+                        buttonBuilder: (context, open) => AstroFloatingButton(icon: Icon(CupertinoIcons.add), onPressed: open),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               TextField(decoration: InputDecoration(hintText: 'Enter text')),

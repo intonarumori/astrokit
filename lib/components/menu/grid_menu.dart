@@ -19,58 +19,52 @@ final class GridMenuItem {
 /// The number of columns is configurable via [columns]. Items flow left-to-right,
 /// top-to-bottom; the last row is left-aligned and padded with empty cells.
 class GridMenu extends StatelessWidget {
-  const GridMenu({
-    super.key,
-    required this.columns,
-    required this.itemsBuilder,
-    this.semanticLabel,
-    this.spacing = 4,
-    this.runSpacing = 4,
-  }) : assert(columns > 0, 'columns must be greater than 0');
+  const GridMenu({super.key, required this.columns, required this.itemsBuilder, this.semanticLabel})
+    : assert(columns > 0, 'columns must be greater than 0');
 
   final int columns;
   final List<GridMenuItem> Function(BuildContext context) itemsBuilder;
   final String? semanticLabel;
-  final double spacing;
-  final double runSpacing;
 
   @override
   Widget build(BuildContext context) {
     final items = itemsBuilder(context);
-    final rows = <Widget>[];
+    final tableRows = <TableRow>[];
     for (var i = 0; i < items.length; i += columns) {
-      final rowItems = <Widget>[];
+      final cells = <Widget>[];
       for (var j = 0; j < columns; j++) {
         final index = i + j;
-        if (j > 0) rowItems.add(SizedBox(width: spacing));
         if (index < items.length) {
           final item = items[index];
-          rowItems.add(
-            Expanded(
-              child: _GridMenuItem(
-                icon: item.icon,
-                label: item.title,
-                destructive: item.destructive,
-                onTap: () {
-                  item.onTap();
-                  PopupScope.of(context).dismiss();
-                },
-              ),
+          cells.add(
+            _GridMenuItem(
+              icon: item.icon,
+              label: item.title,
+              destructive: item.destructive,
+              onTap: () {
+                item.onTap();
+                PopupScope.of(context).dismiss();
+              },
             ),
           );
         } else {
-          rowItems.add(const Expanded(child: SizedBox.shrink()));
+          cells.add(const SizedBox.shrink());
         }
       }
-      if (rows.isNotEmpty) rows.add(SizedBox(height: runSpacing));
-      rows.add(Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: rowItems));
+      tableRows.add(TableRow(children: cells));
     }
 
     return Semantics(
       role: SemanticsRole.menu,
       explicitChildNodes: true,
       label: semanticLabel,
-      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: rows),
+      child: IntrinsicWidth(
+        child: Table(
+          defaultColumnWidth: const IntrinsicColumnWidth(),
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          children: tableRows,
+        ),
+      ),
     );
   }
 }
